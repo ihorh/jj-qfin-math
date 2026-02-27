@@ -30,3 +30,38 @@ def test_gbm_stock_price_forecast():
     assert isinstance(st_max, float)
     assert isclose(st_min, 48.20388)
     assert isclose(st_max, 51.91040)
+
+def test_gbm_jc_hull_example_14_1():
+    s0 = 40.0
+    mu = 16 / 100
+    sigma = 20 / 100
+    t = 6 / 12
+    p = 0.95
+    f = gbm_stock_price_forecast(s0=s0, t=t, mu=mu, sigma=sigma)
+
+    def isclose(a: float, b: float) -> bool:
+        return math.isclose(a, b, abs_tol=10e-4, rel_tol=0)
+
+    confidence_interval = f.price_dist.interval(p)
+    assert isinstance(confidence_interval, tuple)
+    st_min, st_max = confidence_interval
+    assert isinstance(st_min, float)
+    assert isinstance(st_max, float)
+    assert isclose(st_min, 32.5149)
+    assert isclose(st_max, 56.6029)
+
+def test_gbm_jc_hull_example_14_2():
+    s0 = 20
+    mu = 20 / 100
+    sigma = 40 / 100
+    t = 1
+
+    f = gbm_stock_price_forecast(s0=s0, t=t, mu=mu, sigma=sigma)
+
+    def isclose(a: float, b: float) -> bool:
+        return math.isclose(a, b, abs_tol=10e-4, rel_tol=0)
+
+    print(f)
+
+    assert isclose(f.price_expected, 24.4280)
+    assert isclose(f.price_std, 10.1754)

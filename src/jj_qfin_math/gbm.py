@@ -36,7 +36,7 @@ import math
 from dataclasses import dataclass
 from math import exp, log, sqrt
 from textwrap import dedent
-from typing import Protocol, cast
+from typing import Protocol, cast, overload
 
 import numpy as np
 from numpy.typing import ArrayLike
@@ -48,6 +48,9 @@ class _ContinuousDistribution(Protocol):
     def median(self) -> float: ...
     def pdf(self, xs: ArrayLike) -> np.ndarray: ...
     def cdf(self, xs: ArrayLike) -> np.ndarray: ...
+    @overload
+    def interval(self, confidence: float) -> tuple[float, float]: ...
+    @overload
     def interval(self, confidence: ArrayLike) -> np.ndarray | float | tuple[float, ...] | tuple[np.ndarray, ...]: ...
 
 

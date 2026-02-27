@@ -19,6 +19,22 @@ internal research and development.
 * **Pandas**
 
 
+## Installation
+
+For now package is not published to index, however it can be installed from source.
+
+For example with `uv` it can be done in `pyproject.toml` file like this:
+
+```toml
+[project]
+...
+dependencies = ["jj-qfin-math"]
+
+[tool.uv.sources]
+pypipeline = { git = "https://github.com/ihorh/jj-qfin-math" }
+```
+
+
 ## 🚀 Example: GBM Forecasting
 
 ```python

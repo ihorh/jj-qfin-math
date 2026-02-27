@@ -31,7 +31,7 @@ For example with `uv` it can be done in `pyproject.toml` file like this:
 dependencies = ["jj-qfin-math"]
 
 [tool.uv.sources]
-pypipeline = { git = "https://github.com/ihorh/jj-qfin-math" }
+jj-qfin-math = { git = "https://github.com/ihorh/jj-qfin-math" }
 ```
 
 

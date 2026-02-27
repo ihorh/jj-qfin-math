@@ -9,7 +9,7 @@ It includes:
 
 - ``GBMStockPriceForecast`` dataclass: stores expected price, standard deviation, and the
   underlying lognormal distribution.
-- ``gdm_stock_price_forecast`` function: computes expected price, standard deviation, and
+- ``gbm_stock_price_forecast`` function: computes expected price, standard deviation, and
   the lognormal distribution for a given time horizon.
 - ``_ContinuousDistribution`` protocol: defines the interface for continuous probability
   distributions used in the forecast.
@@ -86,7 +86,7 @@ class GBMStockPriceForecast:
         """)
 
 
-def gdm_stock_price_forecast(*, s0: float, t: float, mu: float, sigma: float) -> GBMStockPriceForecast:
+def gbm_stock_price_forecast(*, s0: float, t: float, mu: float, sigma: float) -> GBMStockPriceForecast:
     r"""Compute the GBM-based forecast of a stock price at a given future time.
 
     Parameters
@@ -118,7 +118,7 @@ def gdm_stock_price_forecast(*, s0: float, t: float, mu: float, sigma: float) ->
     - `_price_std_approx` is only accurate for very short horizons.
 
     """
-    _gdm_stock_price_forecast_preconditions(s0, t, mu, sigma)
+    _gbm_stock_price_forecast_preconditions(s0, t, mu, sigma)
 
     # log returns are assumed to be normally distributed with
     # - mean <- logr_mean
@@ -138,7 +138,7 @@ def gdm_stock_price_forecast(*, s0: float, t: float, mu: float, sigma: float) ->
     price_expected = s0 * exp(mu * t)
     price_std = price_expected * sqrt(exp(sigma**2 * t) - 1.0)
 
-    return _gdm_stock_price_forecast_postconditions(
+    return _gbm_stock_price_forecast_postconditions(
         GBMStockPriceForecast(
             price_expected=price_expected,
             price_std=price_std,
@@ -149,13 +149,13 @@ def gdm_stock_price_forecast(*, s0: float, t: float, mu: float, sigma: float) ->
     )
 
 
-def _gdm_stock_price_forecast_preconditions(s0: float, t: float, _r_mean_cc: float, logr_std: float) -> None:
+def _gbm_stock_price_forecast_preconditions(s0: float, t: float, _r_mean_cc: float, logr_std: float) -> None:
     _require(s0 > 0, "s0 must be positive")
     _require(t > 0, "t must be positive")
     _require(logr_std > 0, "logr_std must be positive")
 
 
-def _gdm_stock_price_forecast_postconditions(f: GBMStockPriceForecast, *, st_mean: float) -> GBMStockPriceForecast:
+def _gbm_stock_price_forecast_postconditions(f: GBMStockPriceForecast, *, st_mean: float) -> GBMStockPriceForecast:
     st_dist = f.price_dist
     price_expected = f.price_expected
 

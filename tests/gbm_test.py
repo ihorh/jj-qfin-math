@@ -1,6 +1,6 @@
 import math
 
-from jj_qfin_math.gbm import gdm_stock_price_forecast
+from jj_qfin_math.gbm import gbm_stock_price_forecast
 
 
 def test_gbm_stock_price_forecast():
@@ -9,7 +9,7 @@ def test_gbm_stock_price_forecast():
     vol = 30 / 100
     t = 1 / 252
     p = 0.95
-    f = gdm_stock_price_forecast(s0=s0, t=t, mu=r, sigma=vol)
+    f = gbm_stock_price_forecast(s0=s0, t=t, mu=r, sigma=vol)
     print(f)
     print(f.price_dist.interval(0.95))
 

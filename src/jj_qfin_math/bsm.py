@@ -20,11 +20,19 @@ from scipy.stats import norm
 
 type _OptionSide = Literal["call", "put"]
 
-MIN_VOL: Final[float] = 1e-6
-MAX_VOL: Final[float] = 10.0
+# Volatility bounds for implied volatility computation
+_SIGMA_MIN: Final[float] = 1e-6
+_SIGMA_MAX: Final[float] = 10.0
+
+# Optimizer settings for implied volatility computation
+_SIGMA_ATOL: Final[float] = 1e-8
+_MAX_ITER: Final[int] = 100
+
+# Price tolerance for implied volatility computation
+_PRICE_ATOL: Final[float] = 1e-8
 
 
-def bsm_option_eu_iv(  # noqa: PLR0913
+def bsm_option_eu_iv(  # noqa: D417, PLR0913
     option_type: _OptionSide,
     option_price: float,
     *,
@@ -33,6 +41,11 @@ def bsm_option_eu_iv(  # noqa: PLR0913
     t: float,
     r: float,
     q: float = 0,
+    # Optimizer settings (Technical)
+    sigma_atol: float = _SIGMA_ATOL,
+    max_iter: int = _MAX_ITER,
+    sigma_min: float = _SIGMA_MIN,
+    sigma_max: float = _SIGMA_MAX,
 ) -> float:
     r"""Compute the implied volatility of a European option from its market price.
 
@@ -53,6 +66,17 @@ def bsm_option_eu_iv(  # noqa: PLR0913
     q : float, default 0.0
         Continuously compounded dividend yield.
 
+    Other Parameters
+    ----------------
+    sigma_atol : float, default 1e-8
+        Tolerance for the implied volatility solver.
+    max_iter : int, default 100
+        Maximum number of iterations for the optimizer.
+    sigma_min : float, default 1e-6
+        Lower bound for volatility search.
+    sigma_max : float, default 10.0
+        Upper bound for volatility search.
+
     Returns
     -------
     float
@@ -67,7 +91,7 @@ def bsm_option_eu_iv(  # noqa: PLR0913
     if not (lower <= option_price <= upper):
         return np.nan
 
-    if np.isclose(option_price, lower, atol=1e-8):
+    if np.isclose(option_price, lower, atol=_PRICE_ATOL):
         return 0.0
 
     def price_error_fn(sigma: float) -> float:
@@ -75,7 +99,7 @@ def bsm_option_eu_iv(  # noqa: PLR0913
         return c - option_price if option_type == "call" else p - option_price
 
     try:
-        f = brentq(price_error_fn, a=MIN_VOL, b=MAX_VOL, maxiter=100)
+        f = brentq(price_error_fn, a=sigma_min, b=sigma_max, xtol=sigma_atol, maxiter=max_iter)
         if isinstance(f, float):
             return f
         msg = f"Failed to find implied volatility for {option_type} option"

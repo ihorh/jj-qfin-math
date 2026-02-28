@@ -66,6 +66,8 @@ Inspired by
 * John Hull's *Options, Futures, and Other Derivatives*
 * Daniel P. Palomar *Portfolio Optimization*
 
+* [kilo.ai](https://kilo.ai) for AI-assisted vibecoding
+
 
 ## ⚠️ Disclaimer
 

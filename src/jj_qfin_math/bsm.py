@@ -7,6 +7,7 @@ It includes:
 
 - ``bsm_option_eu_prices``: calculates fair prices for European call and put options.
 - ``bsm_option_eu_iv``: computes implied volatility from market option prices.
+- ``get_option_price_bound``: computes no-arbitrage price bounds for European options.
 
 """
 
@@ -132,6 +133,49 @@ def _bsm_opt_eu_prices_preconditions(s0: float, k: float, t: float, r: float, si
     _require(r > -1, "r must be >= -1")
     _require(sigma > 0, "sigma must be positive")
     _require(q >= 0, "q must be non-negative")
+
+
+def get_option_price_bound(
+    side: _OptionSide,
+    *,
+    s0: float,
+    k: float,
+    t: float,
+    r: float,
+) -> tuple[float, float]:
+    r"""Calculate the no-arbitrage bounds for a European option price.
+
+    Parameters
+    ----------
+    side : {"call", "put"}
+        Whether the option is a call or a put.
+    s0 : float
+        Current spot price of the underlying asset.
+    k : float
+        Strike price (exercise price) of the option.
+    t : float
+        Time to maturity in years (fractional).
+    r : float
+        Continuously compounded risk-free interest rate.
+
+    Returns
+    -------
+    tuple[float, float]
+        A tuple (lower_bound, upper_bound) representing the no-arbitrage price bounds.
+
+    """
+    _get_option_price_bound_preconditions(s0, k, t, r)
+    df = exp(-r * t)
+    if side == "call":
+        return max(0.0, s0 - k * df), s0
+    return max(0.0, k * df - s0), k * df
+
+
+def _get_option_price_bound_preconditions(s0: float, k: float, t: float, r: float) -> None:
+    _require(s0 > 0, "s0 must be positive")
+    _require(k > 0, "k must be positive")
+    _require(t > 0, "t must be positive")
+    _require(r > -1, "r must be >= -1")
 
 
 def _require(condition: bool, descr: str | None = None, *, msg: str = "Invalid argument") -> None:  # noqa: FBT001

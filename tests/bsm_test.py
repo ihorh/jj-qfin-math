@@ -4,7 +4,7 @@ from typing import Any, assert_never
 
 import pytest
 
-from jj_qfin_math.bsm import bsm_option_eu_iv, bsm_option_eu_prices
+from jj_qfin_math.bsm import bsm_option_eu_iv, bsm_option_eu_prices, get_option_price_bound
 
 
 def test_bsm_option_eu_iv() -> None:
@@ -74,3 +74,59 @@ def test_hull_ch_14_eu_option_prices(_label: str, bsm_args: BSMArgs, exp_opt_pri
 
     assert isclose(c, exp_call), f"Call price mismatch: Expected {exp_call}, got {c:.5f}"
     assert isclose(p, exp_put), f"Put price mismatch: Expected {exp_put}, got {p:.5f}"
+
+
+def test_get_option_price_bound_call_itm() -> None:
+    """Test call option bounds - deep ITM case."""
+    s0, k, t, r = 100.0, 80.0, 1.0, 0.05
+    df = math.exp(-r * t)
+
+    lower, upper = get_option_price_bound("call", s0=s0, k=k, t=t, r=r)
+
+    expected_lower = max(0.0, s0 - k * df)
+    expected_upper = s0
+
+    assert math.isclose(lower, expected_lower, abs_tol=10e-4)
+    assert math.isclose(upper, expected_upper, abs_tol=10e-4)
+
+
+def test_get_option_price_bound_call_otm() -> None:
+    """Test call option bounds - OTM case."""
+    s0, k, t, r = 80.0, 100.0, 1.0, 0.05
+    df = math.exp(-r * t)
+
+    lower, upper = get_option_price_bound("call", s0=s0, k=k, t=t, r=r)
+
+    expected_lower = max(0.0, s0 - k * df)  # = 0 for OTM
+    expected_upper = s0
+
+    assert math.isclose(lower, expected_lower, abs_tol=10e-4)
+    assert math.isclose(upper, expected_upper, abs_tol=10e-4)
+
+
+def test_get_option_price_bound_put_itm() -> None:
+    """Test put option bounds - deep ITM case."""
+    s0, k, t, r = 80.0, 100.0, 1.0, 0.05
+    df = math.exp(-r * t)
+
+    lower, upper = get_option_price_bound("put", s0=s0, k=k, t=t, r=r)
+
+    expected_lower = max(0.0, k * df - s0)
+    expected_upper = k * df
+
+    assert math.isclose(lower, expected_lower, abs_tol=10e-4)
+    assert math.isclose(upper, expected_upper, abs_tol=10e-4)
+
+
+def test_get_option_price_bound_put_otm() -> None:
+    """Test put option bounds - OTM case."""
+    s0, k, t, r = 100.0, 80.0, 1.0, 0.05
+    df = math.exp(-r * t)
+
+    lower, upper = get_option_price_bound("put", s0=s0, k=k, t=t, r=r)
+
+    expected_lower = max(0.0, k * df - s0)  # = 0 for OTM
+    expected_upper = k * df
+
+    assert math.isclose(lower, expected_lower, abs_tol=10e-4)
+    assert math.isclose(upper, expected_upper, abs_tol=10e-4)

@@ -14,6 +14,7 @@ It includes:
 from math import exp, log, sqrt
 from typing import Literal
 
+import numpy as np
 from scipy.optimize import brentq
 from scipy.stats import norm
 
@@ -53,9 +54,18 @@ def bsm_option_eu_iv(  # noqa: PLR0913
     -------
     float
         The implied volatility ($\sigma$) that reconciles the option price with the BSM formula.
+        Returns ``np.nan`` if the option price is outside the no-arbitrage bounds
+        (i.e., outside the Black-Scholes model manifold).
 
     """
     _bsm_opt_eu_iv_preconditions(s0, k, t, r, q, option_price)
+
+    lower, upper = get_option_price_bound(option_type, s0=s0, k=k, t=t, r=r)
+    if not (lower <= option_price <= upper):
+        return np.nan
+
+    if np.isclose(option_price, lower, atol=1e-8):
+        return 0.0
 
     def price_error_fn(sigma: float) -> float:
         c, p = bsm_option_eu_prices(s0=s0, k=k, t=t, r=r, sigma=sigma, q=q)

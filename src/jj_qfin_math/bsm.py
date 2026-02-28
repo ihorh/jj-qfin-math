@@ -12,13 +12,16 @@ It includes:
 """
 
 from math import exp, log, sqrt
-from typing import Literal
+from typing import Final, Literal
 
 import numpy as np
 from scipy.optimize import brentq
 from scipy.stats import norm
 
 type _OptionSide = Literal["call", "put"]
+
+MIN_VOL: Final[float] = 1e-6
+MAX_VOL: Final[float] = 10.0
 
 
 def bsm_option_eu_iv(  # noqa: PLR0913
@@ -72,7 +75,7 @@ def bsm_option_eu_iv(  # noqa: PLR0913
         return c - option_price if option_type == "call" else p - option_price
 
     try:
-        f = brentq(price_error_fn, a=0.001, b=5.0, maxiter=100)
+        f = brentq(price_error_fn, a=MIN_VOL, b=MAX_VOL, maxiter=100)
         if isinstance(f, float):
             return f
         msg = f"Failed to find implied volatility for {option_type} option"

@@ -35,6 +35,12 @@ jj-qfin-math = { git = "https://github.com/ihorh/jj-qfin-math" }
 ```
 
 
+## Algorithms and Models
+
+* Geometric Brownian Motion (GBM) model for asset price forecasting
+* Black-Scholes-Merton (BSM) model for European option pricing
+
+
 ## 🚀 Example: GBM Forecasting
 
 ```python

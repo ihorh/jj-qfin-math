@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from math import exp, log, sqrt
-from typing import Literal, TypedDict
+from typing import Any, Literal, TypedDict
 
 import numpy as np
 from scipy.optimize import brentq
@@ -127,10 +127,7 @@ def bsm_option_eu_iv(  # noqa: PLR0913
 
     try:
         f = brentq(price_error_fn, **_to_brentq_kwargs(solver_settings))
-        if isinstance(f, float):
-            return f
-        msg = f"Failed to find implied volatility for {option_type} option"
-        raise RuntimeError(msg)
+        return _check_float(f)
     except ValueError as e:
         msg = f"Failed to find implied volatility for {option_type} option: {e}"
         raise RuntimeError(msg) from e
@@ -278,3 +275,16 @@ def _require(condition: bool, descr: str | None = None, *, msg: str = "Invalid a
     if descr:
         msg = f"{msg}: {descr}"
     raise ValueError(msg)
+
+
+def _check(condition: bool, descr: str | None = None, *, msg: str = "Invalid state") -> None:  # noqa: FBT001
+    if condition:
+        return
+    if descr:
+        msg = f"{msg}: {descr}"
+    raise RuntimeError(msg)
+
+
+def _check_float(val: Any, descr: str | None = None, *, msg: str = "Invalid state") -> float:  # noqa: ANN401
+    _check(isinstance(val, float), descr, msg=msg)
+    return val

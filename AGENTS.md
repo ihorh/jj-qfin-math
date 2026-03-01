@@ -33,9 +33,9 @@ uv run pytest tests/bsm_test.py -v
 
 For all options-related functions, use this consistent argument order:
 
-1. **Underlying data (price, vol)**: `s0`, `sigma`
-2. **Option data: ttm, strike, side**: `t`, `k`, `option_type`/`side`
-3. **Market data**: `r` (risk-free rate), `q` (dividend yield)
+1. **Underlying data (price, vol)**: `s0`, `sigma`, `q` (dividend yield)
+2. **Option data: ttm, strike, side**: `t`, `k`, `option_type`/`side`, `option_price` (if available)
+3. **Market data**: `r` (risk-free rate), 
 4. **Other technical args**: optimizer settings, bounds, etc.
 
 ### Example

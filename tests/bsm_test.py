@@ -17,13 +17,14 @@ def test_bsm_option_eu_iv() -> None:
     s0, k, t, r, q = 15.0, 13.0, 3 / 12, 0.05, 0.0
 
     iv = bsm_option_eu_iv(
+        s0=s0,
+        sigma=0.4,  # initial guess
+        q=q,
+        t=t,
+        k=k,
         option_type="call",
         option_price=2.5,
-        s0=s0,
-        k=k,
-        t=t,
         r=r,
-        q=q,
     )
 
     expected_iv = 0.3964
@@ -81,7 +82,7 @@ def test_get_option_price_bound_call_itm() -> None:
     s0, k, t, r = 100.0, 80.0, 1.0, 0.05
     df = math.exp(-r * t)
 
-    lower, upper = get_option_price_bound("call", s0=s0, k=k, t=t, r=r)
+    lower, upper = get_option_price_bound(s0=s0, t=t, k=k, side="call", r=r)
 
     expected_lower = max(0.0, s0 - k * df)
     expected_upper = s0
@@ -95,7 +96,7 @@ def test_get_option_price_bound_call_otm() -> None:
     s0, k, t, r = 80.0, 100.0, 1.0, 0.05
     df = math.exp(-r * t)
 
-    lower, upper = get_option_price_bound("call", s0=s0, k=k, t=t, r=r)
+    lower, upper = get_option_price_bound(s0=s0, t=t, k=k, side="call", r=r)
 
     expected_lower = max(0.0, s0 - k * df)  # = 0 for OTM
     expected_upper = s0
@@ -109,7 +110,7 @@ def test_get_option_price_bound_put_itm() -> None:
     s0, k, t, r = 80.0, 100.0, 1.0, 0.05
     df = math.exp(-r * t)
 
-    lower, upper = get_option_price_bound("put", s0=s0, k=k, t=t, r=r)
+    lower, upper = get_option_price_bound(s0=s0, t=t, k=k, side="put", r=r)
 
     expected_lower = max(0.0, k * df - s0)
     expected_upper = k * df
@@ -123,7 +124,7 @@ def test_get_option_price_bound_put_otm() -> None:
     s0, k, t, r = 100.0, 80.0, 1.0, 0.05
     df = math.exp(-r * t)
 
-    lower, upper = get_option_price_bound("put", s0=s0, k=k, t=t, r=r)
+    lower, upper = get_option_price_bound(s0=s0, t=t, k=k, side="put", r=r)
 
     expected_lower = max(0.0, k * df - s0)  # = 0 for OTM
     expected_upper = k * df

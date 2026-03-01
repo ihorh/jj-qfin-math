@@ -21,7 +21,6 @@ uv run pytest tests/bsm_test.py -v
 
 ## Code Style
 
-- **Line length**: 120 characters
 - **Linting**: ruff (configured in pyproject.toml)
 - **Type checking**: pyright (basic mode)
 - **Docstrings**: numpy conventions

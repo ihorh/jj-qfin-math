@@ -25,6 +25,9 @@ uv run pytest tests/bsm_test.py -v
 - **Linting**: ruff (configured in pyproject.toml)
 - **Type checking**: pyright (basic mode)
 - **Docstrings**: numpy conventions
+- **Comments**: Avoid adding inline (`#`) comments unless explicitly asked by the user.
+  Keep existing user comments. Keep comments that contain instructions to linters
+  and typecheckers (e.g., `# noqa:`, `# type: ignore`, `# noqa: D417`).
 
 ## Argument Ordering Convention
 
